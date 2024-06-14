@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Camera & Gallery"
 include(":app")
- 
+include(":cam_gallery")

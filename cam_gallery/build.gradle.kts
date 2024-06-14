@@ -55,7 +55,7 @@ publishing {
             from(components["release"])
             groupId = "com.github.Alerion23"
             artifactId = "cam-gallery"
-            version = "1.0.1"
+            version = "1.0.2"
         }
     }
 }

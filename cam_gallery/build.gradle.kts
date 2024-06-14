@@ -8,6 +8,13 @@ android {
     namespace = "com.alerion.cam_gallery"
     compileSdk = 34
 
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+
     defaultConfig {
         minSdk = 26
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -52,10 +59,12 @@ dependencies {
 publishing {
     publications {
         register<MavenPublication>("release") {
-            from(components["release"])
             groupId = "com.github.Alerion23"
             artifactId = "cam-gallery"
-            version = "1.0.2"
+            version = "1.0.3"
+            afterEvaluate {
+                from(components["release"])
+            }
         }
     }
 }

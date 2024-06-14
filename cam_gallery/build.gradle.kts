@@ -52,13 +52,10 @@ dependencies {
 publishing {
     publications {
         register<MavenPublication>("release") {
+            from(components["release"])
             groupId = "com.github.alerion23"
             artifactId = "cam-gallery"
             version = "1.0.1"
-
-            afterEvaluate {
-                from(components["release"])
-            }
         }
     }
 }

@@ -50,7 +50,7 @@ android {
 
 dependencies {
 
-    implementation(project(path = ":cam_gallery"))
+    implementation(project(":cam_gallery"))
     //Coil
     implementation(libs.coil.compose)
     implementation(libs.androidx.core.ktx)

@@ -23,7 +23,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -61,7 +61,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "com.github.Alerion23"
             artifactId = "cam-gallery"
-            version = "1.0.4"
+            version = "1.0.5"
             afterEvaluate {
                 from(components["release"])
             }

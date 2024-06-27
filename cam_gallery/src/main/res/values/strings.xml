@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="library_file_provider">%1$s.library.file.provider</string>
+</resources>

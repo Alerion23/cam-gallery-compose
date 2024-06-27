@@ -22,7 +22,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-     implementation("com.github.Alerion23:cam-gallery-compose:1.0.7")
+     implementation("com.github.Alerion23:cam-gallery-compose:1.0.8")
 }
 ```
 

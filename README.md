@@ -5,13 +5,14 @@ Fast implementing camera and gallery options.
 
 ## Setup
 
-##### build.gradle(Project)
+##### settings.gradle(Project)
 
 ```kotlin
-buildscript {
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        google()
         mavenCentral()
-        gradlePluginPortal()
         maven { url = uri("https://jitpack.io") }
     }
 }
@@ -21,7 +22,7 @@ buildscript {
 
 ```kotlin
 dependencies {
-     implementation("com.github.Alerion23:cam-gallery-compose:1.0.6")
+     implementation("com.github.Alerion23:cam-gallery-compose:1.0.7")
 }
 ```
 
@@ -30,18 +31,19 @@ dependencies {
 ```kotlin
  var capturedImageUri by remember {
     mutableStateOf<Uri>(Uri.EMPTY)
-}
+ }
  var showImageChooser by remember {
      mutableStateOf(false)
-}
-CameraAndGalleryProvider(
-  showChooser = showImageChooser,
-  isGalleryOnly = true, // Set to false to enable either camera or gallery
-  onDismiss = { showImageChooser = false }) {
-  // Handle the image received from the camera or gallery
-  showImageChooser = false
-  capturedImageUri = it ?: Uri.EMPTY
-}
+ }
+ CameraAndGalleryProvider(
+   showChooser = showImageChooser,
+   isGalleryOnly = true, // Set to false to enable either camera or gallery
+   onDismiss = { showImageChooser = false },
+   onImageReceived = { uri ->
+     // Handle the image received from the camera or gallery
+     showImageChooser = false
+     capturedImageUri = uri ?: Uri.EMPTY
+   })
 ```
 
 ### License

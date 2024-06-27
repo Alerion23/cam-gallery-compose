@@ -112,6 +112,9 @@ private fun ImageChooserBottomSheet(
     onChooseImage: () -> Unit
 ) {
     val state = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val height = WindowInsets.navigationBars
+        .asPaddingValues()
+        .calculateBottomPadding()
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp),
@@ -121,11 +124,6 @@ private fun ImageChooserBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    bottom = WindowInsets.navigationBars
-                        .asPaddingValues()
-                        .calculateBottomPadding()
-                )
         ) {
             Text(
                 text = "Choose option",
@@ -143,7 +141,7 @@ private fun ImageChooserBottomSheet(
             BottomSheetItem(imageVector = Icons.Default.Image, title = "Gallery") {
                 onChooseImage()
             }
-            Spacer(modifier = Modifier.size(16.dp))
+            Spacer(modifier = Modifier.size(height))
         }
     }
 }

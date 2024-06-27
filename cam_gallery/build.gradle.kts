@@ -45,7 +45,6 @@ android {
 
 dependencies {
 
-    implementation(libs.android.gradle.api)
     implementation(libs.material.icons.extended)
     implementation(libs.material3)
     implementation(libs.androidx.core.ktx)
@@ -62,7 +61,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "com.github.Alerion23"
             artifactId = "cam-gallery"
-            version = "1.0.6"
+            version = "1.0.7"
             afterEvaluate {
                 from(components["release"])
             }

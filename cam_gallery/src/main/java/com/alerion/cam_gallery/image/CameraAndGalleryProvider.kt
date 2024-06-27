@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,26 +29,30 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import com.alerion.cam_gallery.SDK
+import com.alerion.cam_gallery.R
 import java.io.File
+
+typealias ImageActivityResult = ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>
 
 @Composable
 fun CameraAndGalleryProvider(
     context: Context = LocalContext.current,
-    showChooser: Boolean,
+    authority: String = stringResource(R.string.library_file_provider, context.packageName),
     storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+    showChooser: Boolean,
+    isGalleryOnly: Boolean,
     onDismiss: () -> Unit,
     onImageReceived: (Uri?) -> Unit
 ) {
@@ -72,30 +77,32 @@ fun CameraAndGalleryProvider(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            val tmpUri = getTemporaryUri(storageDir, context)
+            val tmpUri = getTemporaryUri(storageDir, context, authority)
             tempUri.value = tmpUri
             tempUri.value?.let { takePhotoLauncher.launch(it) }
         } else {
-            imageChooser.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            imageChooser.start()
         }
     }
-    LaunchedEffect(key1 = Unit) {
-        SDK.init(context)
-    }
     if (showChooser) {
-        ImageChooserBottomSheet(
-            onDismiss = onDismiss,
-            onTakePhoto = {
-                checkCameraPermission(context, isGranted = {
-                    tempUri.value?.let { takePhotoLauncher.launch(it) }
-                }, isNotGranted = {
-                    cameraPermissionLauncher.launch(it)
-                })
-            },
-            onChooseImage = { imageChooser.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }
-        )
+        if (isGalleryOnly) {
+            imageChooser.start()
+        } else {
+            ImageChooserBottomSheet(
+                onDismiss = onDismiss,
+                onTakePhoto = {
+                    checkCameraPermission(context, isGranted = {
+                        tempUri.value?.let { takePhotoLauncher.launch(it) }
+                    }, isNotGranted = {
+                        cameraPermissionLauncher.launch(it)
+                    })
+                },
+                onChooseImage = { imageChooser.start() }
+            )
+        }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -167,7 +174,11 @@ private fun BottomSheetItem(
     }
 }
 
-private fun getTemporaryUri(storageDir: File?, context: Context): Uri? {
+private fun ImageActivityResult.start() {
+    launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+}
+
+private fun getTemporaryUri(storageDir: File?, context: Context, authority: String): Uri? {
     storageDir?.let {
         it.mkdirs()
         val file = File.createTempFile(
@@ -178,7 +189,7 @@ private fun getTemporaryUri(storageDir: File?, context: Context): Uri? {
 
         return FileProvider.getUriForFile(
             context,
-            SDK.fileProviderAuthority,
+            authority,
             file
         )
     }

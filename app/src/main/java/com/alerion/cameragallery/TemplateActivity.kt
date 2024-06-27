@@ -6,8 +6,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
@@ -23,7 +26,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.alerion.cam_gallery.image.CameraAndGalleryProvider
 import com.alerion.cameragallery.ui.theme.CameraGalleryTheme
 
-class MainActivity : ComponentActivity() {
+class TemplateActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -36,7 +39,11 @@ class MainActivity : ComponentActivity() {
                     mutableStateOf(false)
                 }
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    CameraAndGalleryProvider(showChooser = showImageChooser, onDismiss = { showImageChooser = false}) {
+                    CameraAndGalleryProvider(
+                        showChooser = showImageChooser,
+                        isGalleryOnly = true, // Set to false to enable either camera or gallery
+                        onDismiss = { showImageChooser = false }) {
+                        // Handle the image received from the camera or gallery
                         showImageChooser = false
                         capturedImageUri = it ?: Uri.EMPTY
                     }
@@ -49,17 +56,30 @@ class MainActivity : ComponentActivity() {
                         Button(onClick = {
                             showImageChooser = true
                         }) {
-                            Text(text = "Capture Image From Camera")
+                            Text(text = "Get image")
                         }
                     }
 
                     if (capturedImageUri.path?.isNotEmpty() == true) {
-                        Image(
-                            modifier = Modifier
-                                .padding(16.dp, 8.dp),
-                            painter = rememberAsyncImagePainter(capturedImageUri),
-                            contentDescription = null
-                        )
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Image(
+                                modifier = Modifier
+                                    .height(300.dp)
+                                    .padding(16.dp, 8.dp),
+                                painter = rememberAsyncImagePainter(capturedImageUri),
+                                contentDescription = null
+                            )
+                            Spacer(modifier = Modifier.padding(16.dp))
+                            Button(onClick = {
+                                capturedImageUri = Uri.EMPTY
+                            }) {
+                                Text(text = "Clear Image")
+                            }
+                        }
                     }
                 }
             }

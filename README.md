@@ -1,5 +1,5 @@
 # cam-gallery-compose
-Fast implementing camera and gallery options.
+Fast implementing of camera and gallery options.
 
 [![](https://jitpack.io/v/Alerion23/cam-gallery-compose.svg)](https://jitpack.io/#Alerion23/cam-gallery-compose)
 

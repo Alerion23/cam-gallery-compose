@@ -73,17 +73,23 @@ fun CameraAndGalleryProvider(
             onImageReceived(null)
         }
     }
+
+    fun launchPhotoLauncher() {
+        val tmpUri = getTemporaryUri(storageDir, context, authority)
+        tempUri.value = tmpUri
+        tempUri.value?.let { takePhotoLauncher.launch(it) }
+    }
+
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            val tmpUri = getTemporaryUri(storageDir, context, authority)
-            tempUri.value = tmpUri
-            tempUri.value?.let { takePhotoLauncher.launch(it) }
+            launchPhotoLauncher()
         } else {
             imageChooser.start()
         }
     }
+
     if (showChooser) {
         if (isGalleryOnly) {
             imageChooser.start()
@@ -92,7 +98,7 @@ fun CameraAndGalleryProvider(
                 onDismiss = onDismiss,
                 onTakePhoto = {
                     checkCameraPermission(context, isGranted = {
-                        tempUri.value?.let { takePhotoLauncher.launch(it) }
+                        launchPhotoLauncher()
                     }, isNotGranted = {
                         cameraPermissionLauncher.launch(it)
                     })
